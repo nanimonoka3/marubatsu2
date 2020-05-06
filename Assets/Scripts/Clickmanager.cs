@@ -4,45 +4,58 @@ using System.Collections.Generic;
 //using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;  
+using UnityEngine.UI;
 
 
-public class Clickmanager : MonoBehaviour
-{   
+public class ClickManager : MonoBehaviour
+{
     public int place;
-    public GameObject score_object = null; // Textオブジェクト
-    public static int[] state = new int[9];// スコア変数
-    public static Text[] Score_text=new Text[9];
+    //1 2 3
+    //4 5 6
+    //7 8 9
+    public GameObject masu = null;
+    public static int[] MBstate = new int[9];// スコア変数,×→-1,〇→1,無印→0;
+    public static Text[] MBmark = new Text[9];
     // 初期化
     void Start()
     {
         int i;
-        for (i = 0; i < 9; i++) {
-            state[i] = 0;
+        for (i = 0; i < 9; i++)
+        {
+            MBstate[i] = 0;
         }
     }
-    public void OnMouseDown()
+
+    void OnMouseDown()
+    {
+        putMBmark();
+        //var objectofRuleManager =new RuleManager();
+        //objectofRuleManager.judge();
+    }
+
+    void putMBmark()
     {
         int i;//for文
         for (i = 0; i < 9; i++)
         {
-            Score_text[i] = score_object.GetComponent<Text>();
+            MBmark[i] = masu.GetComponent<Text>();
 
         }
-        if (state[place - 1] != 0)
+        if (MBstate[place - 1] != 0)
         {
             //すでにマークされてる場合を除外
         }
-        else if (Turnmanager.turn %2== 1) {
-            Score_text[place - 1].text = "×";
-            state[place - 1] = -1;
-            Turnmanager.turn++;
+        else if (RuleManager.turn % 2 == 1)
+        {
+            MBmark[place - 1].text = "×";
+            MBstate[place - 1] = -1;
+            RuleManager.turn++;
         }
         else
         {
-            Score_text[place - 1].text = "〇";
-            state[place - 1] = 1;
-            Turnmanager.turn++;
+            MBmark[place - 1].text = "〇";
+            MBstate[place - 1] = 1;
+            RuleManager.turn++;
         }
-        }
+    }
 }

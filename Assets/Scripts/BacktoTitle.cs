@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class BacktoTitle : MonoBehaviour
+public class BackToTitle : MonoBehaviour
 {
     // Start is called before the first frame update
     public void OnClick()

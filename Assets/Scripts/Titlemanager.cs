@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.SceneManagement;
 
-public class Titlemanager : MonoBehaviour
+public class TitleManager : MonoBehaviour
 
 {
     public void OnClick() { 

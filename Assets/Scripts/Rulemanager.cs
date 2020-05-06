@@ -4,90 +4,116 @@ using System.Data;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Rulemanager : MonoBehaviour
+public class RuleManager : MonoBehaviour
 {
     // Start is called before the first frame update
-    public GameObject Showwin = null; // Textオブジェクト
+    public GameObject Showwin = null;
     public GameObject ShowwinBG;
     Text win;
-    public bool Battleend = false; 
+    public bool Battleend = false;
+    public static int turn;
+    public GameObject Showturn = null;
+    Text nowturn;
     void Start()
     {
         ShowwinBG.SetActive(false);
+        turn = 0;
     }
-
-    // Update is called once per frame
     void Update()
     {
+        if (Input.GetMouseButtonDown(0))
+        {
+            shownowturn();
+            judge();
+        }
+    }
+    public void shownowturn()
+    {
+        nowturn = Showturn.GetComponent<Text>();
+        if (turn % 2 == 0)
+        {
+            nowturn.text = "〇";
+        }
+        else
+        {
+            nowturn.text = "×";
+        }
+    }
+    public void judge()
+    {
         //引き分け判定
-        if (Turnmanager.turn == 9)
+        if (turn == 9)
         {
 
             win = Showwin.GetComponent<Text>();
             ShowwinBG.SetActive(true);
-            win.text = "Draw...";
+            if (Battleend == false)
+            {
+                win.text = "Draw...";
+            }
             Battleend = true;
         }
         //勝ち判定
-        if (Clickmanager.state[0] == Clickmanager.state[1]&& Clickmanager.state[0] == Clickmanager.state[2]&& Clickmanager.state[0] !=0)
+        if (ClickManager.MBstate[0] == ClickManager.MBstate[1] && ClickManager.MBstate[0] == ClickManager.MBstate[2])
         {
-            Winmgr();
+            Winmgr(ClickManager.MBstate[0]);
         }
-        if (Clickmanager.state[3] == Clickmanager.state[4] && Clickmanager.state[3] == Clickmanager.state[5] && Clickmanager.state[3] != 0)
+        if (ClickManager.MBstate[3] == ClickManager.MBstate[4] && ClickManager.MBstate[3] == ClickManager.MBstate[5])
         {
-            Winmgr();
+            Winmgr(ClickManager.MBstate[3]);
         }
-        if (Clickmanager.state[6] == Clickmanager.state[7] && Clickmanager.state[6] == Clickmanager.state[8] && Clickmanager.state[6] != 0)
+        if (ClickManager.MBstate[6] == ClickManager.MBstate[7] && ClickManager.MBstate[6] == ClickManager.MBstate[8])
         {
-            Winmgr();
+            Winmgr(ClickManager.MBstate[6]);
         }
         //ここまで横列
-        if (Clickmanager.state[0] == Clickmanager.state[3] && Clickmanager.state[0] == Clickmanager.state[6] && Clickmanager.state[0] != 0)
+        if (ClickManager.MBstate[0] == ClickManager.MBstate[3] && ClickManager.MBstate[0] == ClickManager.MBstate[6])
         {
-            Winmgr();
+            Winmgr(ClickManager.MBstate[0]);
         }
-        if (Clickmanager.state[1] == Clickmanager.state[4] && Clickmanager.state[1] == Clickmanager.state[7] && Clickmanager.state[1] != 0)
+        if (ClickManager.MBstate[1] == ClickManager.MBstate[4] && ClickManager.MBstate[1] == ClickManager.MBstate[7])
         {
-            Winmgr();
+            Winmgr(ClickManager.MBstate[1]);
         }
-        if (Clickmanager.state[2] == Clickmanager.state[5] && Clickmanager.state[2] == Clickmanager.state[8] && Clickmanager.state[2] != 0)
+        if (ClickManager.MBstate[2] == ClickManager.MBstate[5] && ClickManager.MBstate[2] == ClickManager.MBstate[8])
         {
-            Winmgr();
+            Winmgr(ClickManager.MBstate[2]);
         }
         //ここまで縦列
-        if (Clickmanager.state[0] == Clickmanager.state[4] && Clickmanager.state[0] == Clickmanager.state[8] && Clickmanager.state[0] != 0)
+        if (ClickManager.MBstate[0] == ClickManager.MBstate[4] && ClickManager.MBstate[0] == ClickManager.MBstate[8])
         {
-            Winmgr();
+            Winmgr(ClickManager.MBstate[0]);
         }
-        if (Clickmanager.state[2] == Clickmanager.state[4] && Clickmanager.state[2] == Clickmanager.state[6] && Clickmanager.state[2] != 0)
+        if (ClickManager.MBstate[2] == ClickManager.MBstate[4] && ClickManager.MBstate[2] == ClickManager.MBstate[6])
         {
-            Winmgr();
+            Winmgr(ClickManager.MBstate[2]);
         }
         //ななめ
-
-
-
     }
-    public void Winmgr() {
+    void Winmgr(int winnerMBstate)
+    {
         //どちらかが勝った時
-        Battleend = true;
-        ShowwinBG.SetActive(true);
-        win = Showwin.GetComponent<Text>();
-        if (Turnmanager.turn %2== 1)
+        //Battleend = true;
+        if (winnerMBstate != 0)
         {
-            win.text = "WINNER:〇";
-        }
-        else {
-            win.text = "WINNER:×";
-        }
-        int i;//for文
-        for (i = 0; i < 9; i++)
-        {
-           
-            Clickmanager.state[i] = 2;//これ以上の変更を無効に
-
+            ShowwinBG.SetActive(true);
+            win = Showwin.GetComponent<Text>();
+            if (winnerMBstate == 1)
+            {
+                win.text = "WINNER:〇";
+            }
+            else if (winnerMBstate == -1)
+            {
+                win.text = "WINNER:×";
+            }
+            int i;//for文
+            for (i = 0; i < 9; i++)
+            {
+                ClickManager.MBstate[i] = 2;//これ以上の変更を無効に
+            }
+            Battleend = true;
         }
 
     }
-   
+
 }
