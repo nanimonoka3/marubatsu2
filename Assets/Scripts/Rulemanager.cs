@@ -1,119 +1,109 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
-public class RuleManager : MonoBehaviour
+namespace Script
 {
-    // Start is called before the first frame update
-    public GameObject Showwin = null;
-    public GameObject ShowwinBG;
-    Text win;
-    public bool Battleend = false;
-    public static int turn;
-    public GameObject Showturn = null;
-    Text nowturn;
-    void Start()
+    public class RuleManager
     {
-        ShowwinBG.SetActive(false);
-        turn = 0;
-    }
-    void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
+        public static int[] MBstate = new int[9];// スコア変数,×→-1,〇→1,無印→0;
+        public int turn;
+        public RuleManager()
         {
-            shownowturn();
-            judge();
+            Init();
         }
-    }
-    public void shownowturn()
-    {
-        nowturn = Showturn.GetComponent<Text>();
-        if (turn % 2 == 0)
+        public void Init()
         {
-            nowturn.text = "〇";
-        }
-        else
-        {
-            nowturn.text = "×";
-        }
-    }
-    public void judge()
-    {
-        //引き分け判定
-        if (turn == 9)
-        {
-
-            win = Showwin.GetComponent<Text>();
-            ShowwinBG.SetActive(true);
-            if (Battleend == false)
-            {
-                win.text = "Draw...";
-            }
-            Battleend = true;
-        }
-        //勝ち判定
-        if (ClickManager.MBstate[0] == ClickManager.MBstate[1] && ClickManager.MBstate[0] == ClickManager.MBstate[2])
-        {
-            Winmgr(ClickManager.MBstate[0]);
-        }
-        if (ClickManager.MBstate[3] == ClickManager.MBstate[4] && ClickManager.MBstate[3] == ClickManager.MBstate[5])
-        {
-            Winmgr(ClickManager.MBstate[3]);
-        }
-        if (ClickManager.MBstate[6] == ClickManager.MBstate[7] && ClickManager.MBstate[6] == ClickManager.MBstate[8])
-        {
-            Winmgr(ClickManager.MBstate[6]);
-        }
-        //ここまで横列
-        if (ClickManager.MBstate[0] == ClickManager.MBstate[3] && ClickManager.MBstate[0] == ClickManager.MBstate[6])
-        {
-            Winmgr(ClickManager.MBstate[0]);
-        }
-        if (ClickManager.MBstate[1] == ClickManager.MBstate[4] && ClickManager.MBstate[1] == ClickManager.MBstate[7])
-        {
-            Winmgr(ClickManager.MBstate[1]);
-        }
-        if (ClickManager.MBstate[2] == ClickManager.MBstate[5] && ClickManager.MBstate[2] == ClickManager.MBstate[8])
-        {
-            Winmgr(ClickManager.MBstate[2]);
-        }
-        //ここまで縦列
-        if (ClickManager.MBstate[0] == ClickManager.MBstate[4] && ClickManager.MBstate[0] == ClickManager.MBstate[8])
-        {
-            Winmgr(ClickManager.MBstate[0]);
-        }
-        if (ClickManager.MBstate[2] == ClickManager.MBstate[4] && ClickManager.MBstate[2] == ClickManager.MBstate[6])
-        {
-            Winmgr(ClickManager.MBstate[2]);
-        }
-        //ななめ
-    }
-    void Winmgr(int winnerMBstate)
-    {
-        //どちらかが勝った時
-        //Battleend = true;
-        if (winnerMBstate != 0)
-        {
-            ShowwinBG.SetActive(true);
-            win = Showwin.GetComponent<Text>();
-            if (winnerMBstate == 1)
-            {
-                win.text = "WINNER:〇";
-            }
-            else if (winnerMBstate == -1)
-            {
-                win.text = "WINNER:×";
-            }
-            int i;//for文
-            for (i = 0; i < 9; i++)
-            {
-                ClickManager.MBstate[i] = 2;//これ以上の変更を無効に
-            }
-            Battleend = true;
+            int[] MBstate = new int[9];
         }
 
+        public void nextturn()
+        {
+            turn++;
+        }
+        public bool maruturn()
+        {
+            if (turn % 2 == 1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+
+            }
+
+        }
+        public int judge()
+        {
+            //決着→ターン数を返す
+            //引き分け→-1を返す
+            //ゲーム続行→0を返す
+
+            //勝ち判定
+            if (MBstate[0] == MBstate[1]
+                && MBstate[0] == MBstate[2]
+                && MBstate[0] != 0)
+            {
+                return turn;
+            }
+            if (MBstate[3] == MBstate[4]
+                && MBstate[3] == MBstate[5]
+                && MBstate[3] != 0
+                )
+            {
+                return turn;
+            }
+            if (MBstate[6] == MBstate[7]
+                && MBstate[6] == MBstate[8]
+                && MBstate[6] != 0
+                )
+            {
+                return turn;
+            }
+            //ここまで横列
+            if (MBstate[0] == MBstate[3]
+                && MBstate[0] == MBstate[6]
+                && MBstate[0] != 0
+                )
+            {
+                return turn;
+            }
+            if (MBstate[1] == MBstate[4]
+                && MBstate[1] == MBstate[7]
+                && MBstate[1] != 0
+                )
+            {
+                return turn;
+            }
+            if (MBstate[2] == MBstate[5]
+                && MBstate[2] == MBstate[8]
+                && MBstate[2] != 0
+                )
+            {
+                return turn;
+            }
+            //ここまで縦列
+            if (MBstate[0] == MBstate[4]
+                && MBstate[0] == MBstate[8]
+                && MBstate[0] != 0
+                )
+            {
+                return turn;
+            }
+            if (MBstate[2] == MBstate[4]
+                && MBstate[2] == MBstate[6]
+                && MBstate[2] != 0
+                )
+            {
+                return turn;
+            }
+            //ななめ
+            if (turn == 9)
+            {
+                return -1;
+            }
+            //引き分け
+            return 0;
+        }
     }
 
 }

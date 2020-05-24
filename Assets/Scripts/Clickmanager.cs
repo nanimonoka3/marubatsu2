@@ -1,61 +1,93 @@
-﻿using JetBrains.Annotations;
-using System.Collections;
-using System.Collections.Generic;
-//using UnityEditorInternal;
+﻿using Script;
+using UnityEditorInternal;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
-
 
 public class ClickManager : MonoBehaviour
 {
-    public int place;
-    //1 2 3
-    //4 5 6
-    //7 8 9
-    public GameObject masu = null;
-    public static int[] MBstate = new int[9];// スコア変数,×→-1,〇→1,無印→0;
-    public static Text[] MBmark = new Text[9];
-    // 初期化
+    public Text[] boardTexts;
+    public Text Showwin;
+    public Text Nextturn;
+    public GameObject ShowwinBG;
+    private RuleManager _ruleManager;
+
     void Start()
     {
+        _ruleManager = new RuleManager();
+
         int i;
         for (i = 0; i < 9; i++)
         {
-            MBstate[i] = 0;
+            RuleManager.MBstate[i] = 0;
+            boardTexts[i].text = "";
         }
     }
-
-    void OnMouseDown()
+    public void OnSelect(int index)
     {
-        putMBmark();
-        //var objectofRuleManager =new RuleManager();
-        //objectofRuleManager.judge();
+        //Debug.Log(index);
+        putMBmark(index);
     }
-
-    void putMBmark()
+    public int GetCellMark(int index)
     {
-        int i;//for文
-        for (i = 0; i < 9; i++)
-        {
-            MBmark[i] = masu.GetComponent<Text>();
+        return RuleManager.MBstate[index];
+    }
+    private void putMBmark(int index)
+    {
 
-        }
-        if (MBstate[place - 1] != 0)
+        if (GetCellMark(index) != 0)
         {
+            Debug.Log("already marked!!");
             //すでにマークされてる場合を除外
         }
-        else if (RuleManager.turn % 2 == 1)
+        else if (_ruleManager.maruturn() == true)//
         {
-            MBmark[place - 1].text = "×";
-            MBstate[place - 1] = -1;
-            RuleManager.turn++;
+            RuleManager.MBstate[index] = -1;
+            boardTexts[index].text = "×";
+            Nextturn.text = "〇";
+            _ruleManager.nextturn();
         }
         else
         {
-            MBmark[place - 1].text = "〇";
-            MBstate[place - 1] = 1;
-            RuleManager.turn++;
+
+            RuleManager.MBstate[index] = 1;
+            boardTexts[index].text = "〇";
+            Nextturn.text = "×";
+            _ruleManager.nextturn();
+        }
+        if (_ruleManager.judge() != 0)
+        {
+            int winner;
+            if (_ruleManager.judge() == -1)
+            {
+                winner = -1;
+            }
+            else
+            {
+                winner = _ruleManager.judge() % 2;
+            }
+
+            Winmgr(winner);
+        }
+    }
+    public void Winmgr(int winner)
+    {
+        if (winner == -1)
+        {
+            Showwin.text = "DRAW";
+        }
+        else if (winner == 1)
+        {
+            Showwin.text = "WINNER:〇";
+        }
+        else
+        {
+            Showwin.text = "WINNER:×";
+        }
+        ShowwinBG.SetActive(true);
+        int i;//for文
+        for (i = 0; i < 9; i++)
+        {
+            RuleManager.MBstate[i] = 2;//これ以上の変更を無効に
         }
     }
 }

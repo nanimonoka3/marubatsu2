@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class BackToTitle : MonoBehaviour
 {
-    // Start is called before the first frame update
+    public GameObject BTT_button;
     public void OnClick()
     {
         SceneManager.LoadScene("Title");
