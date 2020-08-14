@@ -1,14 +1,13 @@
 ﻿using Script;
-using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ClickManager : MonoBehaviour
 {
-    public Text[] boardTexts;
-    public Text Showwin;
-    public Text Nextturn;
-    public GameObject ShowwinBG;
+    public Text[] iconText;
+    public Text resultText;
+    public Text nextPlayerText;
+    public GameObject resultBG;
     private RuleManager _ruleManager;
 
     void Start()
@@ -18,76 +17,63 @@ public class ClickManager : MonoBehaviour
         int i;
         for (i = 0; i < 9; i++)
         {
-            RuleManager.MBstate[i] = 0;
-            boardTexts[i].text = "";
+            _ruleManager.PutState(i,0);
+            iconText[i].text = "";
         }
     }
     public void OnSelect(int index)
     {
-        //Debug.Log(index);
-        putMBmark(index);
-    }
-    public int GetCellMark(int index)
-    {
-        return RuleManager.MBstate[index];
-    }
-    private void putMBmark(int index)
-    {
-
-        if (GetCellMark(index) != 0)
+        if (GetCellIconState(index) == 0)
         {
+            PutIconText(index);
+            if (_ruleManager.Judge() != 0)
+            {
+                WinManager();
+            }
+        }
+        else {
             Debug.Log("already marked!!");
-            //すでにマークされてる場合を除外
         }
-        else if (_ruleManager.maruturn() == true)//
-        {
-            RuleManager.MBstate[index] = -1;
-            boardTexts[index].text = "×";
-            Nextturn.text = "〇";
-            _ruleManager.nextturn();
-        }
-        else
-        {
-
-            RuleManager.MBstate[index] = 1;
-            boardTexts[index].text = "〇";
-            Nextturn.text = "×";
-            _ruleManager.nextturn();
-        }
-        if (_ruleManager.judge() != 0)
-        {
-            int winner;
-            if (_ruleManager.judge() == -1)
-            {
-                winner = -1;
-            }
-            else
-            {
-                winner = _ruleManager.judge() % 2;
-            }
-
-            Winmgr(winner);
-        }
+       
     }
-    public void Winmgr(int winner)
+    private int GetCellIconState(int index)
     {
-        if (winner == -1)
+        return RuleManager.IconState[index];
+    }
+    private void PutIconText(int index)
+    {
+        _ruleManager.PutIconState(index);
+        if (_ruleManager.MaruTurn() == true)
         {
-            Showwin.text = "DRAW";
-        }
-        else if (winner == 1)
-        {
-            Showwin.text = "WINNER:〇";
+            iconText[index].text = "×";
+            nextPlayerText.text = "〇";
         }
         else
         {
-            Showwin.text = "WINNER:×";
+            iconText[index].text = "〇";
+            nextPlayerText.text = "×";    
         }
-        ShowwinBG.SetActive(true);
+        _ruleManager.AddTurn();
+    }
+    private void WinManager()
+    {
+        if (_ruleManager.Judge() == -1)
+        {
+            resultText.text = "DRAW";
+        }
+        else if (_ruleManager.Judge() % 2 == 1)
+        {
+            resultText.text = "WINNER:〇";
+        }
+        else
+        {
+            resultText.text = "WINNER:×";
+        }
+        resultBG.SetActive(true);
         int i;//for文
         for (i = 0; i < 9; i++)
         {
-            RuleManager.MBstate[i] = 2;//これ以上の変更を無効に
+            _ruleManager.PutState(i,2);
         }
     }
 }
